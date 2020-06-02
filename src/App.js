@@ -15,8 +15,8 @@ export default function App() {
   const episodes = seasons[selectedSeason] || [];
 
   useEffect(() => {
-    fetchShow().then((data) => {
-      // console.log("fetched data", data);
+    fetchShow("stranger-things").then((data) => {
+      console.log("fetched data", data);
       setShow(data);
       setSeasons(formatSeasons(data._embedded.episodes));
     });
