@@ -9,20 +9,29 @@ import Episodes from "./components/Episodes";
 import "./styles.css";
 
 export default function App() {
+  const [showList] = useState(["The Expanse", "Altered Carbon", "Stranger Things"]);
   const [show, setShow] = useState(null);
+  const [selectedShow, setSelectedShow] = useState("");
   const [seasons, setSeasons] = useState([]);
   const [selectedSeason, setSelectedSeason] = useState("");
   const episodes = seasons[selectedSeason] || [];
 
   useEffect(() => {
-    fetchShow("stranger-things").then((data) => {
-      console.log("fetched data", data);
+    fetchShow("the expanse").then((data) => {
+      // console.log("fetched data", data);
       setShow(data);
       setSeasons(formatSeasons(data._embedded.episodes));
     });
   }, []);
 
-  const handleSelect = (e) => {
+  const handleSelectShow = (e) => {
+    fetchShow(e.value).then((data) => {
+      setShow(data);
+      setSelectedShow(e.value);
+      setSeasons(formatSeasons(data._embedded.episodes));
+    });
+  };
+  const handleSelectSeason = (e) => {
     setSelectedSeason(e.value);
   };
 
@@ -31,15 +40,29 @@ export default function App() {
   }
 
   return (
-    <div className="App">
+    <div className="App" data-testid="app">
       <img className="poster-img" src={show.image.original} alt={show.name} />
       <h1>{show.name}</h1>
       {parse(show.summary)}
+      {/* <Dropdown
+        options={Object.values(showList)}
+        onChange={handleSelectShow}
+        value={selectedShow || "Select a show"}
+        placeholder="Select a show"
+        data-testid="showTest"
+        name="showDropdown"
+      /> */}
       <Dropdown
         options={Object.keys(seasons)}
-        onChange={handleSelect}
+        onChange={handleSelectSeason}
         value={selectedSeason || "Select a season"}
-        placeholder="Select an option"
+        placeholder="Select a season"
+        data-testid="seasonDropdown"
+        name="seasonDropdown"
+        role="listbox"
+        aria-label="seasonDropdown"
+        label="seasonDropdown"
+        id="seasonDropdown"
       />
       <Episodes episodes={episodes} />
     </div>
