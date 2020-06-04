@@ -17,7 +17,7 @@ export default function App() {
   const episodes = seasons[selectedSeason] || [];
 
   useEffect(() => {
-    fetchShow("the expanse").then((data) => {
+    fetchShow().then((data) => {
       // console.log("fetched data", data);
       setShow(data);
       setSeasons(formatSeasons(data._embedded.episodes));
@@ -25,11 +25,16 @@ export default function App() {
   }, []);
 
   const handleSelectShow = (e) => {
-    fetchShow(e.value).then((data) => {
-      setShow(data);
-      setSelectedShow(e.value);
-      setSeasons(formatSeasons(data._embedded.episodes));
-    });
+    console.log("e.value is", e.value);
+
+    fetchShow(e.value)
+      .then((data) => {
+        setShow(data);
+        setSelectedShow(e.value);
+        setSeasons(formatSeasons(data._embedded.episodes));
+        setSelectedSeason("");
+      })
+      .catch((err) => console.log(err));
   };
   const handleSelectSeason = (e) => {
     setSelectedSeason(e.value);
@@ -44,25 +49,18 @@ export default function App() {
       <img className="poster-img" src={show.image.original} alt={show.name} />
       <h1>{show.name}</h1>
       {parse(show.summary)}
-      {/* <Dropdown
+      <Dropdown
         options={Object.values(showList)}
         onChange={handleSelectShow}
         value={selectedShow || "Select a show"}
         placeholder="Select a show"
-        data-testid="showTest"
-        name="showDropdown"
-      /> */}
+      />
       <Dropdown
         options={Object.keys(seasons)}
         onChange={handleSelectSeason}
         value={selectedSeason || "Select a season"}
         placeholder="Select a season"
         data-testid="seasonDropdown"
-        name="seasonDropdown"
-        role="listbox"
-        aria-label="seasonDropdown"
-        label="seasonDropdown"
-        id="seasonDropdown"
       />
       <Episodes episodes={episodes} />
     </div>
